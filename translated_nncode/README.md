@@ -15,7 +15,7 @@ Checked models have been translated into our format; others are pending.
 - [ ] UNet [[repo](https://github.com/c0nn3r/pytorch_highway_networks)]
 - [ ] CondenseNet [[repo](https://github.com/ShichenLiu/CondenseNet)]
 - [ ] SENet [[repo](https://github.com/moskomule/senet.pytorch)]
-- [ ] ACGAN [[repo](https://github.com/gitlimlab/ACGAN-PyTorch)]
+- [x] ACGAN [[repo](https://github.com/gitlimlab/ACGAN-PyTorch)]
 - [x] ResNet [[repo](https://github.com/pytorch/vision/blob/master/torchvision/models/resnet.py)]
 - [x] VGGNet [[repo](https://github.com/pytorch/vision/blob/master/torchvision/models/vgg.py)]
 - [x] MobileNet [[repo](https://github.com/marvis/pytorch-mobilenet)]
