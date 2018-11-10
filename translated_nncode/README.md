@@ -18,4 +18,4 @@ Checked models have been translated into our format; others are pending.
 - [ ] ACGAN [[repo](https://github.com/gitlimlab/ACGAN-PyTorch)]
 - [ ] ResNet [[repo](https://github.com/pytorch/vision/blob/master/torchvision/models/resnet.py)]
 - [ ] VGGNet [[repo](https://github.com/pytorch/vision/blob/master/torchvision/models/vgg.py)]
-- [ ] MobileNet [[repo](https://github.com/marvis/pytorch-mobilenet)]
+- [x] MobileNet [[repo](https://github.com/marvis/pytorch-mobilenet)]
