@@ -16,6 +16,6 @@ Checked models have been translated into our format; others are pending.
 - [ ] CondenseNet [[repo](https://github.com/ShichenLiu/CondenseNet)]
 - [ ] SENet [[repo](https://github.com/moskomule/senet.pytorch)]
 - [ ] ACGAN [[repo](https://github.com/gitlimlab/ACGAN-PyTorch)]
-- [ ] ResNet [[repo](https://github.com/pytorch/vision/blob/master/torchvision/models/resnet.py)]
+- [x] ResNet [[repo](https://github.com/pytorch/vision/blob/master/torchvision/models/resnet.py)]
 - [x] VGGNet [[repo](https://github.com/pytorch/vision/blob/master/torchvision/models/vgg.py)]
 - [x] MobileNet [[repo](https://github.com/marvis/pytorch-mobilenet)]
