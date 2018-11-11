@@ -19,12 +19,13 @@ class ConvBN_mobilenet(nn.Module):
 
 class ConvDW_mobilenet(nn.Module):
     def __init__(self, inp, oup, stride):
-        self.conv_lyr1 = nn.Conv2d(inp, inp, 3, stride, 1, groups=inp, bias=False),
-        self.bn1 = nn.BatchNorm2d(inp),
+        super(ConvDW_mobilenet, self).__init__()
+        self.conv_lyr1 = nn.Conv2d(inp, inp, 3, stride, 1, groups=inp, bias=False)
+        self.bn1 = nn.BatchNorm2d(inp)
         # nn.ReLU(inplace=True),
 
-        self.conv_lyr2 = nn.Conv2d(inp, oup, 1, 1, 0, bias=False),
-        self.bn2 = nn.BatchNorm2d(oup),
+        self.conv_lyr2 = nn.Conv2d(inp, oup, 1, 1, 0, bias=False)
+        self.bn2 = nn.BatchNorm2d(oup)
         # nn.ReLU(inplace=True),
     
     def forward(self, x):
