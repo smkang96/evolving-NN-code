@@ -6,7 +6,7 @@ import torch.nn.functional as F
 
 class ConvDrop_ACGAN(nn.Module):
     def __init__(self, inp, oup, stride, padding, bn=True):
-        super(ConvBN_ACGAN, self).__init__()
+        super(ConvDrop_ACGAN, self).__init__()
         self._bn = bn
         self.conv_lyr = nn.Conv2d(inp, oup, 3, stride, padding, bias=False)
         if bn:
@@ -32,7 +32,7 @@ class Net(nn.Module):
         self.conv4 = ConvDrop_ACGAN(64, 128, 1, 0)
         self.conv5 = ConvDrop_ACGAN(128, 256, 2, 1)
         self.conv6 = ConvDrop_ACGAN(256, 512, 1, 0)
-        self.fc = nn.Linear(512*13*13, 10)
+        self.fc = nn.Linear(512*1*1, 10)
 
     def forward(self, x):
         out = self.conv1(x)
@@ -41,6 +41,6 @@ class Net(nn.Module):
         out = self.conv4(out)
         out = self.conv5(out)
         out = self.conv6(out)
-        out = out.view(-1, 512*13*13)
+        out = out.view(-1, 512*1*1)
         out = self.fc(out)
         return out
