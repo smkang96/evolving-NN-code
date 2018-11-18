@@ -14,7 +14,7 @@ class AlexBlock(nn.Module):
 		return x
 
 class AlexClassifier(nn.Module):
-	def __init__(self, num_classes=1000):
+	def __init__(self, num_classes=10):
 		self.classifier = nn.Sequential(
 			nn.Dropout(),
             nn.Linear(256 * 6 * 6, 4096),
@@ -35,8 +35,7 @@ class Net(nn.Module):
 		self.layer3 = AlexBlock(192, 384, 3, padding=1)
 		self.layer4 = AlexBlock(384, 256, 3, padding=1)
 		self.layer5 = AlexBlock(256, 256, 3, padding=1)
-		#number of classes is 1000?
-		self.classifier = AlexClassifier(1000)
+		self.classifier = AlexClassifier(10)
 
 	def forward(self, x):
 		out = self.layer1(x)
