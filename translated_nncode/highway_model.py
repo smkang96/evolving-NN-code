@@ -1,7 +1,7 @@
 import torch.nn as nn
 import torch.nn.functional as F
 
-class HighwayBlock(nn.Module):
+class HighwayBlock_9(nn.Module):
 	def __init__(self, size, f=F.softmax):
 		super(Highway, self).__init__()
 
@@ -28,16 +28,16 @@ class Net(nn.Module):
 	def __init__(self):
 		super(Net, self).__init__()
 
-		self.layer1 = HighwayBlock(64)
+		self.layer1_9 = HighwayBlock(64)
 	def forward(self, x):
-		out = self.layer1(x)
-		out = self.layer1(x)
-		out = self.layer1(x)
-		out = self.layer1(x)
-		out = self.layer1(x)
-		out = self.layer1(x)
-		out = self.layer1(x)
-		out = self.layer1(x)
-		out = self.layer1(x)
-		out = self.layer1(x)
+		out = self.layer1_9(x)
+		out = self.layer1_9(x)
+		out = self.layer1_9(x)
+		out = self.layer1_9(x)
+		out = self.layer1_9(x)
+		out = self.layer1_9(x)
+		out = self.layer1_9(x)
+		out = self.layer1_9(x)
+		out = self.layer1_9(x)
+		out = self.layer1_9(x)
 		return out
