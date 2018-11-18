@@ -80,7 +80,6 @@ def crossover(parent1, parent2, gid):
 	child_for = child_for + for2[idx2 + 1:]
 
 	for statement in for2[idx2 + 1:]:
-		print('hi')
 		st_list = list(filter(None, re.split(delim, statement)))
 
 		line_name = st_list[1]
@@ -110,10 +109,12 @@ def crossover(parent1, parent2, gid):
 		child_file.write('\t\t' + elem + '\n')
 
 	#write basic forward statement
+	child_file.write('#forward')
 	child_file.write('\tdef forward(self, x):\n')
 	for elem in child_for:
 		child_file.write('\t\t' + elem + '\n')
-	
+	child_file.write('\t\treturn out\n')
+	child_file.write('#return')
 	return gid
 
 #for debugging
