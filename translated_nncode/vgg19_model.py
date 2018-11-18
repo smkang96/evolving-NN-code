@@ -6,6 +6,7 @@ import torch.nn.functional as F
 
 class VGGBlock(nn.Module):
     def __init__(self, inp, outp, lnum):
+        super(VGGBlock, self).__init__()
         self.first_lyr = nn.Sequential(
             nn.Conv2d(inp, outp, kernel_size=3, padding=1), 
             nn.BatchNorm2d(outp), 
@@ -27,6 +28,7 @@ class VGGBlock(nn.Module):
     
 class VGGClassifier(nn.Module):
     def __init__(self, inp, class_num):
+        super(VGGClassifier, self).__init__()
         self.classifier = nn.Sequential(
             nn.Linear(inp, 4096),
             nn.ReLU(True),
@@ -34,7 +36,7 @@ class VGGClassifier(nn.Module):
             nn.Linear(4096, 4096),
             nn.ReLU(True),
             nn.Dropout(),
-            nn.Linear(4096, num_classes),
+            nn.Linear(4096, 10),
         )
     
     def forward(self, x):
@@ -50,7 +52,7 @@ class Net(nn.Module):
         self.layer3 = VGGBlock(128, 256, 4)
         self.layer4 = VGGBlock(256, 512, 4)
         self.layer5 = VGGBlock(512, 512, 4)
-        self.vggc = VGGClassifier(512 * 7 * 7, 10) # 10 should be immutable...
+        self.vggc = VGGClassifier(512 * 1 * 1, 10) # 10 should be immutable...
     
     def forward(self, x):
         out = self.layer1(x)

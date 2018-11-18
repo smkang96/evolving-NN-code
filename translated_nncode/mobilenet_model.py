@@ -53,7 +53,7 @@ class Net(nn.Module):
         self.layerM_12 = ConvDW_mobilenet(512, 512, 1)
         self.layerM_13 = ConvDW_mobilenet(512, 1024, 2)
         self.layerM_14 = ConvDW_mobilenet(1024, 1024, 1)
-        self.avgpool = nn.AvgPool2d(7)
+        self.avgpool = nn.AvgPool2d(2)
         self.fc = nn.Linear(1024, 10)
 
     def forward(self, x):
