@@ -199,7 +199,7 @@ class NSGAII:
                 
             Q = self.make_new_pop(P)
             
-'''
+"""
 if __name__ == '__main__':
     nsga2 = NSGAII(2, 0.1, 1.0)
     
@@ -215,4 +215,4 @@ if __name__ == '__main__':
         csv_file.write("" + str(P[i].objectives[0]) + ", " + str(P[i].objectives[1]) + "\n")
         
     csv_file.close()
-    '''
+    """
