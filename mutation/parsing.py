@@ -251,12 +251,12 @@ def get_size(model):
 
 
 #def mutation(file_name):
-def mutation(file_name):
+def mutation(file_name,deletion_prob=0.5):
 	with open(file_name, 'r') as f:
 		lines = f.readlines()
 	device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 #block_dic = create_block_pool(file_name_list)
-	if(random.random()<0.1):
+	if(random.random()<deletion_prob):
 		new_lines, for_index, init_index = rand_delete(lines)
 	else: 
 		new_lines = rand_insert(lines, block_dic)
