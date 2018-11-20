@@ -268,7 +268,7 @@ def mutation(file_name):
 		f.write('        return out')
 	#from tmp import *
 	import tmp 
-	model = tmp.NET().to(device)
+	model = tmp.Net().to(device)
 	#model = NET().to(device)
 	channel_size, length = get_size(model)
 	print("sizes are: ",channel_size,length)
@@ -280,4 +280,5 @@ def mutation(file_name):
 	with open(file_name,'w') as f:
 		for s in new_lines_final:
 			f.write(str(s))
-#mutation('densenet.py')
+
+mutation('1_0.py')
