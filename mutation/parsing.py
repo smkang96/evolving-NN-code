@@ -281,4 +281,4 @@ def mutation(file_name):
 		for s in new_lines_final:
 			f.write(str(s))
 
-mutation('1_0.py')
+#mutation('./../1_0.py')
