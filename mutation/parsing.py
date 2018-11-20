@@ -277,7 +277,7 @@ def mutation(file_name):
 	new_lines_final = new_lines[0:for_st-1] + ["        self.avgpool_end = nn.AvgPool2d("+str(length)+", stride=1)\n"]+["        self.linear_end = nn.Linear("+str(channel_size)+',10)\n']
 	new_lines_final = new_lines_final+ new_lines[for_st-1:] + ["        out = self.avgpool_end(out)\n"] + ["        out = out.view(out.size(0), -1)\n"] + ['        out = self.linear_end(out)\n']+['        return out\n']
 
-	with open('file_name','w') as f:
+	with open(file_name,'w') as f:
 		for s in new_lines_final:
 			f.write(str(s))
-mutation('densenet.py')
+#mutation('densenet.py')
