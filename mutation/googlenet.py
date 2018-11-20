@@ -26,8 +26,6 @@ class NET(nn.Module):
         self.a5_2 = Inception_2(832, 832,256, 160, 320, 32, 128, 128)
         self.b5_2 = Inception_2(832, 1024,384, 192, 384, 48, 128, 128)
         #forward
-        # self.avgpool_2 = nn.AvgPool2d(8, stride=1)
-        # self.linear_2 = nn.Linear(1024, 10)
 
     def forward(self, x):
         out = self.pre_layers_2(x)
@@ -43,10 +41,6 @@ class NET(nn.Module):
         out = self.a5_2(out)
         out = self.b5_2(out)
         # return out 
-        # out = self.avgpool_2(out)
-        # out = out.view(out.size(0), -1)
-        # out = self.linear_2(out)
-        # return out
 
 
 

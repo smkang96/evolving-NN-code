@@ -57,9 +57,9 @@ class Transition_5(nn.Module):
         out = F.avg_pool2d(out, 2)
         return out
 
-class _make_dense_5(nn.Module):
+class make_dense_5(nn.Module):
     def __init__(self, nChannels,output_size,  growthRate, nDenseBlocks, bottleneck):
-        super(_make_dense_5,self).__init__()
+        super(make_dense_5,self).__init__()
         self.nChannels = nChannels
         self.growthRate = growthRate
         self.nDenseBlocks = nDenseBlocks
@@ -138,13 +138,14 @@ class BBBConv2d_4(nn.Module):
     def forward(self, x):
         conv_mean = self.conv2dMean(x)
         conv_si = self.conv2dSi(x)
-        out = conv_mean + conv_si * torch.randn(conv_mean.size()).to('cuda')
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        out = conv_mean + conv_si * torch.randn(conv_mean.size()).to(device)
         return out
 
 class BayesBlock_4(nn.Module):
     def __init__(self, inputs, outputs, kernel):
         super(BayesBlock_4,self).__init__()
-        self.conv1 = BBBConv2d(inputs, outputs, 5, stride=1, padding=2)
+        self.conv1 = BBBConv2d_4(inputs, outputs, 5, stride=1, padding=2)
         self.soft1 = nn.Softplus()
         self.pool1 = nn.MaxPool2d(kernel_size=3, stride=2)
 
@@ -161,7 +162,7 @@ class SepConv_6(nn.Module):
         self.conv1 = nn.Conv2d(in_planes, out_planes,
                                kernel_size, stride,
                                padding=(kernel_size-1)//2,
-                               bias=False, groups=in_planes)
+                               bias=False)#, groups=in_planes)
         self.bn1 = nn.BatchNorm2d(out_planes)
 
     def forward(self, x):
@@ -179,10 +180,10 @@ class CellA_6(nn.Module):
 
     def forward(self, x):
         y1 = self.sep_conv1(x)
-        y2 = F.max_pool2d(x, kernel_size=3, stride=self.stride, padding=1)
-        if self.stride==2:
-            y2 = self.bn1(self.conv1(y2))
-        return F.relu(y1+y2)
+        # y2 = F.max_pool2d(x, kernel_size=3, stride=self.stride, padding=1)
+        # if self.stride==2:
+        #     y2 = self.bn1(self.conv1(y2))
+        return F.relu(y1)
 
 
 class PNAS_make_layer_6(nn.Module):
@@ -206,13 +207,14 @@ class PNAS_downsample_6(nn.Module):
     def forward(self, x):
         out = self.layer(x)
         return out
+
 class PNAS_basic_block_6(nn.Module):
     def __init__(self,inputsize, outputsize):
         super (PNAS_basic_block_6,self).__init__()
         self.conv1 = nn.Conv2d(inputsize, outputsize, kernel_size=3, stride=1, padding=1, bias=False)
         self.bn1 = nn.BatchNorm2d(outputsize)
     def forward(self, x):
-        out = out = F.relu(self.bn1(self.conv1(x)))
+        out = F.relu(self.bn1(self.conv1(x)))
         return out
 
 class ShuffleBlock_3(nn.Module):
@@ -234,12 +236,12 @@ class Bottleneck_3(nn.Module):
 
         mid_planes = out_planes//4
         g = 1 if in_planes==24 else groups
-        self.conv1 = nn.Conv2d(in_planes, mid_planes, kernel_size=1, groups=g, bias=False)
+        self.conv1 = nn.Conv2d(in_planes, mid_planes, kernel_size=1,  bias=False)
         self.bn1 = nn.BatchNorm2d(mid_planes)
         self.shuffle1 = ShuffleBlock_3(groups=g)
-        self.conv2 = nn.Conv2d(mid_planes, mid_planes, kernel_size=3, stride=stride, padding=1, groups=mid_planes, bias=False)
+        self.conv2 = nn.Conv2d(mid_planes, mid_planes, kernel_size=3, stride=stride, padding=1,  bias=False)
         self.bn2 = nn.BatchNorm2d(mid_planes)
-        self.conv3 = nn.Conv2d(mid_planes, out_planes, kernel_size=1, groups=groups, bias=False)
+        self.conv3 = nn.Conv2d(mid_planes, out_planes, kernel_size=1,  bias=False)
         self.bn3 = nn.BatchNorm2d(out_planes)
 
         self.shortcut = nn.Sequential()
@@ -270,14 +272,137 @@ class shuffle_layer_3(nn.Module):
         out = self.layers(x)
         return out 
 class shuffle_basic_block_3(nn.Module):
-    def __init__(self):
+    def __init__(self,input_size,output_size):
         super(shuffle_basic_block_3, self).__init__()
 
-        self.conv1 = nn.Conv2d(3, 24, kernel_size=1, bias=False)
-        self.bn1 = nn.BatchNorm2d(24)
+        self.conv1 = nn.Conv2d(input_size, output_size, kernel_size=1, bias=False)
+        self.bn1 = nn.BatchNorm2d(output_size)
     def forward(self,x):
         out = F.relu(self.bn1(self.conv1(x)))
         return out
+
+# class AlexBlock(nn.Module):
+#     def __init__(self, inp, outp, k_size, stride=1, padding):
+#         self.block = nn.Sequential(
+#             nn.Conv2d(inp, outp, kernel_size = k_size, stride = stride, padding=padding),
+#             nn.ReLU(inplace=True),
+#         )
+
+#     def forward(self, x):
+#         out = self.block(x)
+#         return x
+
+
+class ConvDrop_ACGAN(nn.Module):
+    def __init__(self, inp, oup, stride, padding, bn=True):
+        super(ConvDrop_ACGAN, self).__init__()
+        self._bn = bn
+        self.conv_lyr = nn.Conv2d(inp, oup, 3, stride, padding, bias=False)
+        if bn:
+            self.batchnorm = nn.BatchNorm2d(oup)
+        self.lrelu = nn.LeakyReLU(inplace=True)
+        self.dropout = nn.Dropout(0.5, inplace=False)
+    
+    def forward(self, x):
+        out = self.conv_lyr(x)
+        if self._bn:
+            out = self.batchnorm(out)
+        out = self.lrelu(out)
+        out = self.dropout(out)
+        return out
+
+class HighwayBlock(nn.Module):
+    def __init__(self, size, f=F.softmax):
+        super(HighwayBlock, self).__init__()
+        self.nonlinear = nn.ModuleList([nn.Linear(size, size)])
+        self.linear = nn.ModuleList([nn.Linear(size, size)])
+        self.gate = nn.ModuleList([nn.Linear(size, size)])
+        self.f = f
+    def forward(self, x):
+        gate = F.sigmoid(self.gate[layer](x))
+        nonlinear = self.f(self.nonlinear[layer](x))
+        linear = self.linear[layer](x)
+        x = gate * nonlinear + (1 - gate) * linear
+        return x
+
+class ConvBN_mobilenet(nn.Module):
+    def __init__(self, inp, oup, stride):
+        super(ConvBN_mobilenet, self).__init__()
+        self.conv_lyr = nn.Conv2d(inp, oup, 3, stride, 1, bias=False)
+        self.bn = nn.BatchNorm2d(oup)
+        self.relu = nn.ReLU(inplace=True)
+    
+    def forward(self, x):
+        out = self.conv_lyr(x)
+        out = self.bn(out)
+        out = self.relu(out)
+        return out
+
+class ConvDW_mobilenet(nn.Module):
+    def __init__(self, inp, oup, stride):
+        super(ConvDW_mobilenet, self).__init__()
+        self.conv_lyr1 = nn.Conv2d(inp, inp, 3, stride, 1, groups=inp, bias=False)
+        self.bn1 = nn.BatchNorm2d(inp)
+        # nn.ReLU(inplace=True),
+
+        self.conv_lyr2 = nn.Conv2d(inp, oup, 1, 1, 0, bias=False)
+        self.bn2 = nn.BatchNorm2d(oup)
+        # nn.ReLU(inplace=True),
+    
+    def forward(self, x):
+        out = self.conv_lyr1(x)
+        out = F.relu(self.bn1(out))
+        out = self.conv_lyr2(out)
+        out = F.relu(self.bn2(out))
+        return out 
+
+
+class VGGBlock(nn.Module):
+    def __init__(self, inp, outp, lnum):
+        super(VGGBlock, self).__init__()
+        self.first_lyr = nn.Sequential(
+            nn.Conv2d(inp, outp, kernel_size=3, padding=1), 
+            nn.BatchNorm2d(outp), 
+            nn.ReLU(inplace=True)
+        )
+        leftover_lyrs = []
+        for li in range(1, lnum):
+            leftover_lyrs.append(nn.Conv2d(outp, outp, kernel_size=3, padding=1))
+            leftover_lyrs.append(nn.BatchNorm2d(outp)) # uses BN as default
+            leftover_lyrs.append(nn.ReLU(inplace=True))
+        self.next_lyrs = nn.Sequential(*leftover_lyrs)
+        self.maxpool = nn.MaxPool2d(kernel_size=2, stride=2)
+    
+    def forward(self, x):
+        out = self.first_lyr(x)
+        out = self.next_lyrs(out)
+        out = self.maxpool(out)
+        return out
+    
+class VGGClassifier(nn.Module):
+    def __init__(self, inp, class_num):
+        super(VGGClassifier, self).__init__()
+        self.classifier = nn.Sequential(
+            nn.Linear(inp, 4096),
+            nn.ReLU(True),
+            nn.Dropout(),
+            nn.Linear(4096, 4096),
+            nn.ReLU(True),
+            nn.Dropout(),
+            nn.Linear(4096, 10),
+        )
+    
+    def forward(self, x):
+        x = x.view(x.size(0), -1)
+        x = self.classifier(x)
+        return x
+
+
+
+
+
+
+
 
 
 

@@ -1,11 +1,21 @@
 import re
 import pickle
 import random
+import torch.nn as nn
+import math
+import torch
+import torch.nn as nn
+from torch.nn import Parameter
+import torch.optim as optim
+import torchvision
+import torchvision.transforms as transforms
+import torch.nn.functional as F
 
-with open('googlenet.py', 'r') as f:
-	lines = f.readlines()
-file_name_list = ('googlenet.py','densenet.py','shufflenet.py','BayesianCNN.py','PNASNet.py')
-
+# with open('densenet.py', 'r') as f:
+# 	lines = f.readlines()
+file_name_list = ('googlenet.py','densenet.py','shufflenet.py','BayesianCNN.py','PNASNet.py','ACGAN_D_model.py','vgg19_model.py','mobilenet_model.py')
+with open('data/basic_block.pickle', 'rb') as handle:
+	blocks = pickle.load(handle)	
 
 def get_init_lines(lines):
 	starting_pos = 0
@@ -129,8 +139,6 @@ def get_IO_size(line,input = True):
 		return 'super'
 	else:
 		tmp_s = re.split(r'[(,)]',line)
-		print(line)
-		print(tmp_s)
 		if(input == True):
 			return tmp_s[1].strip()
 		else:
@@ -170,7 +178,7 @@ def dim_check(lines):
 			if(input_size!=3):
 				lines[i] = change_input_size(lines[i],3)
 		else:
-			print(lines[i], input_size, output_size)
+			# print(lines[i], input_size, output_size)
 			if(input_size== 'max'):
 				continue
 			elif(input_size != output_size):
@@ -190,30 +198,30 @@ def x_out_check(lines):
 		lines[i] = new_for_line
 	return lines
 
-#new_inserted_line = rand_insert(lines, block_dic)
-#with open('tmp_insert_dense.py','w') as f:
+# new_inserted_line = rand_insert(lines, block_dic)
+# with open('tmp_insert_dense.py','w') as f:
 #    for s in new_inserted_line:
 #        f.write(str(s))
-#new_inserted_line = dim_check(new_inserted_line)
-#new_inserted_line = x_out_check(new_inserted_line)
-#with open('tmp_insert_dense_after.py','w') as f:
+# new_inserted_line = dim_check(new_inserted_line)
+# new_inserted_line = x_out_check(new_inserted_line)
+# with open('tmp_insert_dense_after.py','w') as f:
 #    for s in new_inserted_line:
 #        f.write(str(s))
-#new_deleted_line, for_index, init_index = rand_delete(lines)
-#with open('tmp_deleted_dense.py','w') as f:
+# new_deleted_line, for_index, init_index = rand_delete(lines)
+# with open('tmp_deleted_dense.py','w') as f:
 #    for s in new_deleted_line:
 #        f.write(str(s))
-#new_deleted_line = dim_check(new_deleted_line)
-#new_deleted_line = x_out_check(new_deleted_line)
-#with open('tmp_deleted_dense_after.py','w') as f:
+# new_deleted_line = dim_check(new_deleted_line)
+# new_deleted_line = x_out_check(new_deleted_line)
+# with open('tmp_deleted_dense_after.py','w') as f:
 #    for s in new_deleted_line:
 #        f.write(str(s))
 #    f.write('        return out')
-#from tmp_deleted_dense_after import *
+# from tmp_deleted_dense_after import *
 
 
 
-def get_size():
+def get_size(model):
 	device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 	kwargs = {'num_workers': 1, 'pin_memory': True} if torch.cuda.is_available() else {}
 	transform_train = transforms.Compose([
@@ -228,7 +236,7 @@ def get_size():
 	])
 	trainset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform_train)
 	train_loader = torch.utils.data.DataLoader(trainset, batch_size=128, shuffle=True, num_workers=2)
-	model = NET().to(device)
+	#model = NET().to(device)
 	model.train()
 	channel_size = 0
 	length = 0
@@ -243,26 +251,33 @@ def get_size():
 
 
 #def mutation(file_name):
+def mutation(file_name):
+	with open(file_name, 'r') as f:
+		lines = f.readlines()
+	device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+	block_dic = create_block_pool(file_name_list)
+	if(random.random()<0.1):
+		new_lines, for_index, init_index = rand_delete(lines)
+	else: 
+		new_lines = rand_insert(lines, block_dic)
+	new_lines = dim_check(new_lines)
+	new_lines = x_out_check(new_lines)
+	with open('tmp.py','w') as f:
+		for s in new_lines:
+			f.write(str(s))
+		f.write('        return out')
+	#from tmp import *
+	import tmp 
+	model = tmp.NET().to(device)
+	#model = NET().to(device)
+	channel_size, length = get_size(model)
+	print("sizes are: ",channel_size,length)
+	init_lines, in_st, in_end = get_init_lines(new_lines)
+	forward_lines,for_st,for_end = get_forward_lines(new_lines)
+	new_lines_final = new_lines[0:for_st-1] + ["        self.avgpool_end = nn.AvgPool2d("+str(length)+", stride=1)\n"]+["        self.linear_end = nn.Linear("+str(channel_size)+',10)\n']
+	new_lines_final = new_lines_final+ new_lines[for_st-1:] + ["        out = self.avgpool_end(out)\n"] + ["        out = out.view(out.size(0), -1)\n"] + ['        out = self.linear_end(out)\n']+['        return out\n']
 
-block_dic = create_block_pool(file_name_list)
-if(random.random()<0.3):
-	new_lines, for_index, init_index = rand_delete(lines)
-else: 
-	new_lines = rand_insert(lines, block_dic)
-new_lines = dim_check(new_lines)
-new_lines = x_out_check(new_lines)
-with open('tmp.py','w') as f:
-	for s in new_lines:
-		f.write(str(s))
-	f.write('        return out')
-from tmp import *
-channel_size, length = get_size()
-print("sizes are: ",channel_size,length)
-init_lines, in_st, in_end = get_init_lines(new_lines)
-forward_lines,for_st,for_end = get_forward_lines(new_lines)
-new_lines_final = new_lines[0:for_st-1] + ["        self.avgpool_end = nn.AvgPool2d("+str(length)+", stride=1)\n"]+["        self.linear_end = nn.Linear("+str(channel_size)+',10)\n']
-new_lines_final = new_lines_final+ new_lines[for_st-1:] + ["        out = self.avgpool_end(out)\n"] + ["        out = out.view(out.size(0), -1)\n"] + ['        out = self.linear_end(out)\n']+['        return out\n']
-
-with open('testing.py','w') as f:
-	for s in new_lines_final:
-		f.write(str(s))
+	with open('file_name','w') as f:
+		for s in new_lines_final:
+			f.write(str(s))
+mutation('densenet.py')
