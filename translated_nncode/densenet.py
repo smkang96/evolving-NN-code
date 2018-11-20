@@ -56,7 +56,7 @@ class Transition_5(nn.Module):
         out = F.avg_pool2d(out, 2)
         return out
 
-class _make_dense_5(nn.Module):
+class make_dense_5(nn.Module):
     def __init__(self, nChannels, growthRate, nDenseBlocks, bottleneck):
         super(_make_dense_5,self).__init__()
         self.nChannels = nChannels
@@ -80,14 +80,8 @@ class _make_dense_5(nn.Module):
 
 
 class DenseNet(nn.Module):
-    def __init__(): #(growthRate=12, depth=100, reduction=0.5,bottleneck=True, nClasses=10)
+    def __init__(): 
         super(DenseNet, self).__init__()
-
-        # nDenseBlocks = (depth-4) // 3
-        # if bottleneck:
-        #     nDenseBlocks //= 2
-        #nDenseBlocks = 16
-
         nChannels = 2*growthRate
         #nChannels = 24
         self.conv1_5 = nn.Conv2d(3, 24, kernel_size=3, padding=1,bias=False)

@@ -21,4 +21,4 @@ class NET(nn.Module):
         out = self.conv4(out)
         out = self.conv5(out)
         out = self.conv6(out)
-        # return out
+        #return

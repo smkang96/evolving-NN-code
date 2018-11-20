@@ -35,7 +35,7 @@ class Net(nn.Module):
 		self.layer3_7 = AlexBlock(192, 384, 3, padding=1)
 		self.layer4_7 = AlexBlock(384, 256, 3, padding=1)
 		self.layer5_7 = AlexBlock(256, 256, 3, padding=1)
-		self.classifier = AlexClassifier(10)
+		self.classifier_7 = AlexClassifier(10)
 
 	def forward(self, x):
 		out = self.layer1_7(x)

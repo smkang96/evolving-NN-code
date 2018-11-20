@@ -35,4 +35,4 @@ class NET(nn.Module):
         out = self.trans2_5(out)
         out = self.dense3_5(out)
         out = self.simple_linear_5(out)
-        # return out 
+        #return
