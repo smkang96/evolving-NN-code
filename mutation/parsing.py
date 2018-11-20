@@ -13,9 +13,9 @@ import torch.nn.functional as F
 
 # with open('densenet.py', 'r') as f:
 # 	lines = f.readlines()
-file_name_list = ('googlenet.py','densenet.py','shufflenet.py','BayesianCNN.py','PNASNet.py','ACGAN_D_model.py','vgg19_model.py','mobilenet_model.py')
+file_name_list = ('googlenet.py','densenet.py','shufflenet.py','BayesianCNN.py','PNASNet.py','ACGAN_D_model.py','vgg19_model.py','mobilenet_model.py','resnet_model.py')
 with open('data/basic_block.pickle', 'rb') as handle:
-	blocks = pickle.load(handle)	
+	block_dic = pickle.load(handle)	
 
 def get_init_lines(lines):
 	starting_pos = 0
@@ -64,7 +64,7 @@ def create_block_pool(file_name_list):
 		pickle.dump(new_dic,handle, protocol=pickle.HIGHEST_PROTOCOL)
 	return new_dic
 
-block_dic = create_block_pool(file_name_list)
+#block_dic = create_block_pool(file_name_list)
 
 def rand_pick(block_dic):
 	forward_line, init_line = random.choice(list(block_dic.items()))
@@ -255,7 +255,7 @@ def mutation(file_name):
 	with open(file_name, 'r') as f:
 		lines = f.readlines()
 	device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-	block_dic = create_block_pool(file_name_list)
+#block_dic = create_block_pool(file_name_list)
 	if(random.random()<0.1):
 		new_lines, for_index, init_index = rand_delete(lines)
 	else: 
@@ -281,4 +281,4 @@ def mutation(file_name):
 		for s in new_lines_final:
 			f.write(str(s))
 
-#mutation('./../1_0.py')
+#mutation('m1_0.py')
