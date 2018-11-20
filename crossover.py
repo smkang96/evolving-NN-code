@@ -8,12 +8,6 @@ Finds the forward part of the code and does crossover on the two parents to prod
 
 import_statement = 'import torch.nn as nn\n'
 
-def check_dimension_equality(next, prev):
-	return next
-
-def check_variable_equality(child):
-	return child
-
 #Finds the forward function within it and returns each line after forward (not including return) in a list
 def find_forward(tot_txt):
 	tot_txt.reverse()
