@@ -6,7 +6,7 @@ number = '0123456789'
 Finds the forward part of the code and does crossover on the two parents to produce one simple child
 """
 
-import_statement = 'import torch.nn as nn\n'
+import_statement = 'from __future__ import print_function\nimport torch\nimport torch.nn as nn\nimport torch.optim as optim\nimport torch.nn.functional as F\nfrom torch.autograd import Variable\nimport torchvision.datasets as dset\nimport torchvision.transforms as transforms\nfrom torch.utils.data import DataLoader\nimport torchvision.models as models\nimport sys\nimport math\nimport argparse\nfrom torchvision import datasets, transforms\nimport torchvision\nimport torchvision.transforms as transforms\nfrom basic_blocks import *\n'
 
 #Finds the forward function within it and returns each line after forward (not including return) in a list
 def find_forward(tot_txt):
@@ -157,18 +157,18 @@ def crossover(parent1, parent2, gid):
 
 	#write basic init statements
 	child_file.write('class Net(nn.Module):\n')
-	child_file.write('\tdef __init__(self):\n')
-	child_file.write('\t\tsuper(Net, self).__init__()\n')
+	child_file.write('    def __init__(self):\n')
+	child_file.write('        super(Net, self).__init__()\n')
 
 	for elem in child_init:
-		child_file.write('\t\t' + elem + '\n')
+		child_file.write('        ' + elem + '\n')
 
 	#write basic forward statement
 	child_file.write('#forward\n')
-	child_file.write('\tdef forward(self, x):\n')
+	child_file.write('    def forward(self, x):\n')
 	for elem in child_for:
-		child_file.write('\t\t' + elem + '\n')
-	child_file.write('#return')
+		child_file.write('        ' + elem + '\n')
+	child_file.write('#return\n')
 	return gid
 
 #for debugging
