@@ -13,7 +13,7 @@ import torchvision.transforms as transforms
 import imp
 
 ## Evaluation settings
-allowed_train_time = 2 * 15 # in seconds
+allowed_train_time = 2 * 60 # in seconds
 
 ## Data Loaders
 # from pytorch tutorial
@@ -35,6 +35,7 @@ classes = ('plane', 'car', 'bird', 'cat',
 
 def indiv_evaluator(filename):
     import time # ok, really weird error
+    print filename
     module = imp.load_source('module', filename) # imports net structure
 
     ## Network and Optimizer
@@ -86,3 +87,6 @@ def evaluator(dirname, filenames):
     for filename in filenames:
         results.append(indiv_evaluator(dirname + filename))
     return results
+
+if __name__ == '__main__':
+    print evaluator('./translated_nncode/', ['resnet_model.py'])

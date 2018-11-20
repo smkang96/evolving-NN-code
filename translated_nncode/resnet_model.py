@@ -45,6 +45,7 @@ class BasicBlock(nn.Module):
     
 class ResLayer(nn.Module):
     def __init__(self, inp, outp, l_num, stride=1):
+        super(ResLayer, self).__init__()
         downsample = None
         if stride != 1 or inp != outp:
             downsample = nn.Sequential(
@@ -53,9 +54,9 @@ class ResLayer(nn.Module):
             )
 
         layers = []
-        layers.append(block(inp, outp, stride, downsample))
-        for _ in range(1, blocks):
-            layers.append(block(outp, outp))
+        layers.append(BasicBlock(inp, outp, stride, downsample))
+        for _ in range(1, l_num):
+            layers.append(BasicBlock(outp, outp))
         self.layer = nn.Sequential(*layers)
     
     def forward(self, x):
@@ -81,10 +82,10 @@ class Net(nn.Module):
         super(Net, self).__init__()
         self.first_lyr = ConvBN(3, 64)
         self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
-        self.layer1 = ResLayer(BasicBlock, 64, 3)
-        self.layer2 = ResLayer(BasicBlock, 128, 4, stride=2)
-        self.layer3 = ResLayer(BasicBlock, 256, 6, stride=2)
-        self.layer4 = ResLayer(BasicBlock, 512, 3, stride=2)
+        self.layer1 = ResLayer(64, 64, 3)
+        self.layer2 = ResLayer(64, 128, 4, stride=2)
+        self.layer3 = ResLayer(128, 256, 6, stride=2)
+        self.layer4 = ResLayer(256, 512, 3, stride=2)
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         self.fc = nn.Linear(512, 10)
     
