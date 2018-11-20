@@ -65,7 +65,7 @@ def find_forward(tot_txt):
 
 #Assume parent is title a python file of functional neural network code
 def crossover(parent1, parent2, gid):
-	gid = 'n' +  gid + '.py'
+	fname = 'n' +  gid + '.py'
 	child_init = []
 	child_for = []
 	child_for_tmp = []
@@ -151,7 +151,7 @@ def crossover(parent1, parent2, gid):
 
 
 
-	child_file = open(gid, 'w')
+	child_file = open(fname, 'w')
 	#write import statements
 	child_file.write(import_statement + '\n')
 
