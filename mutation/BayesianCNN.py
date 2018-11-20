@@ -12,9 +12,9 @@ import torch.nn.functional as F
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.block1 = BayesBlock(3,32,5)
-        self.block2 = BayesBlock(32, 64,5)
-        self.block3 = BayesBlock(64, 128, 5)
+        self.block1 = BayesBlock_4(3,32,5)
+        self.block2 = BayesBlock_4(32, 64,5)
+        self.block3 = BayesBlock_4(64, 128, 5)
         #forward 
         self.linear = nn.Linear(1152,10)
 

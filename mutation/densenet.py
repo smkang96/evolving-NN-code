@@ -18,13 +18,13 @@ from basic_blocks import *
 
 class NET(nn.Module):
     def __init__(self):
-        super(DenseNet, self).__init__()
+        super(NET, self).__init__()
         self.conv1_5 = nn.Conv2d(3, 24, kernel_size=3, padding=1,bias=False)
-        self.dense1_5 = _make_dense_5(24,'+192', 12, 16, True)
+        self.dense1_5 = make_dense_5(24,'+192', 12, 16, True)
         self.trans1_5 = Transition_5(216, 108)
-        self.dense2_5 = _make_dense_5(108,'+192',12,16,True)
+        self.dense2_5 = make_dense_5(108,'+192',12,16,True)
         self.trans2_5 = Transition_5(300, 150)
-        self.dense3_5 = _make_dense_5(150, '+192',12, 16, True)
+        self.dense3_5 = make_dense_5(150, '+192',12, 16, True)
         self.simple_linear_5 = dense_simple_linear_block_5(342,'+0')
         #forward 
     def forward(self, x):
@@ -36,7 +36,3 @@ class NET(nn.Module):
         out = self.dense3_5(out)
         out = self.simple_linear_5(out)
         # return out 
-        out = torch.squeeze(F.avg_pool2d(out,7))
-        out = F.log_softmax(self.fc(out))
-        return out
-
