@@ -168,7 +168,6 @@ def crossover(parent1, parent2, gid):
 	child_file.write('\tdef forward(self, x):\n')
 	for elem in child_for:
 		child_file.write('\t\t' + elem + '\n')
-	child_file.write('\t\treturn out\n')
 	child_file.write('#return')
 	return gid
 
