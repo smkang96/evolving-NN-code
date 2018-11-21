@@ -284,6 +284,7 @@ def mutation(file_name,deletion_prob=0.5):
 def no_mutation(file_name):
 	with open(file_name, 'r') as f:
 		new_lines = f.readlines()
+	device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 	with open('tmp.py','w') as f:
 		for s in new_lines:
 			f.write(str(s))
