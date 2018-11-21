@@ -3,22 +3,18 @@
 import sys
 import random
 
-def crowded_comparison(s1, s2):
+def crowded_comparison(s1, s2, front_dict, cdist_dict):
     '''
     Compare the two solutions based on crowded comparison.
     '''
-    if s1.rank < s2.rank:
+    if front_dict[s1] < front_dict[s2]:
         return 1
-        
-    elif s1.rank > s2.rank:
+    elif front_dict[s1] > front_dict[s2]:
         return -1
-        
-    elif s1.distance > s2.distance:
+    elif cdist_dict[s1] > cdist_dict[s2]:
         return 1
-        
-    elif s1.distance < s2.distance:
+    elif cdist_dict[s1] < cdist_dict[s2]:
         return -1
-        
     else:
         return 0
 
@@ -58,13 +54,13 @@ class NSGAII:
                     P[j-1] = s2
                     P[j] = s1
                     
-    def sort_crowding(self, P):
+    def sort_crowding(self, P, front_dict, cdist_dict):
         for i in range(len(P)-1, -1, -1):
             for j in range(1, i + 1):
                 s1 = P[j - 1]
                 s2 = P[j]
                 
-                if crowded_comparison(s1, s2) < 0:
+                if crowded_comparison(s1, s2, front_dict, cdist_dict) < 0:
                     P[j - 1] = s2
                     P[j] = s1
 
@@ -87,10 +83,10 @@ class NSGAII:
                 if p == q:
                     continue
                 
-                if p >> q:
+                if p[1] > q[1] and p[2] < q[2]: # p dominates the guy
                     S[p].append(q)
                 
-                elif p << q:
+                elif p[1] < q[1] and p[2] > q[2]: # p is dominated by the guy
                     n[p] += 1
             
             if n[p] == 0:
@@ -116,17 +112,19 @@ class NSGAII:
         '''
         Assign a crowding distance for each solution in the front. 
         '''
+        dist_dict = {}
         for p in front:
-            p.distance = 0
+            dist_dict[p] = 0
         
         for obj_index in range(self.num_objectives):
-            self.sort_objective(front, obj_index)
+            front = sorted(front, key=lambda x: x[obj_index])
             
-            front[0].distance = float('inf')
-            front[len(front) - 1].distance = float('inf')
+            dist_dict[front[0]] = float('inf')
+            dist_dict[front[len(front) - 1]] = float('inf')
             
             for i in range(1, len(front) - 1):
-                front[i].distance += (front[i + 1].distance - front[i - 1].distance)
+                dist_dict[front[i]] += (front[i + 1][obj_index] - front[i - 1][obj_index])
+        return dist_dict
 
     def make_new_pop(self, P):
         '''
@@ -182,22 +180,28 @@ class NSGAII:
         
         del P[:]
         
-        for front in fronts.values():
+        cdist_dict = {}
+        front_dict = {}
+        for front_idx in fronts.keys():
+            front = fronts[front_idx]
+            for p in front:
+                front_dict[p] = front_idx
             if len(front) == 0:
                 break
             
-            self.crowding_distance_assignment(front);
+            front_dist_dict = self.crowding_distance_assignment(front)
+            cdist_dict.update(front_dist_dict)
             P.extend(front)
             
             if len(P) >= population_size:
                 break
         
-        self.sort_crowding(P)
+        self.sort_crowding(P, front_dict, cdist_dict)
         
         if len(P) > population_size/2:
             del P[population_size/2:]
 
-        return P
+        return [p[0] for p in P]
             
 """
 if __name__ == '__main__':
