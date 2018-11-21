@@ -11,7 +11,7 @@ import torchvision.transforms as transforms
 from basic_blocks import *
 
 
-class NET(nn.Module):
+class Net(nn.Module):
     def __init__(self):
         super(NET, self).__init__()
         self.pre_layers_2 = google_basic_block_2(3, 192)

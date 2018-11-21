@@ -4,7 +4,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-class NET(nn.Module):
+class Net(nn.Module):
     def __init__(self):
         super(NET, self).__init__()
         self.conv1 = ConvDrop_ACGAN(3, 16, 2, 1, bn=False)

@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-class NET(nn.Module):
+class Net(nn.Module):
 	def __init__(self):
 		super(NET, self).__init__()
 		self.layer1 = AlexBlock(3, 64, 11, 4, 2)
