@@ -281,4 +281,22 @@ def mutation(file_name,deletion_prob=0.5):
 		for s in new_lines_final:
 			f.write(str(s))
 
+def no_mutation(file_name):
+	with open(file_name, 'r') as f:
+		new_lines = f.readlines()
+	with open('tmp.py','w') as f:
+		for s in new_lines:
+			f.write(str(s))
+		f.write('        return out')
+	import tmp 
+	model = tmp.Net().to(device)
+	channel_size, length = get_size(model)
+	init_lines, in_st, in_end = get_init_lines(new_lines)
+	forward_lines,for_st,for_end = get_forward_lines(new_lines)
+	new_lines_final = new_lines[0:for_st-1] + ["        self.avgpool_end = nn.AvgPool2d("+str(length)+", stride=1)\n"]+["        self.linear_end = nn.Linear("+str(channel_size)+',10)\n']
+	new_lines_final = new_lines_final+ new_lines[for_st-1:] + ["        out = self.avgpool_end(out)\n"] + ["        out = out.view(out.size(0), -1)\n"] + ['        out = self.linear_end(out)\n']+['        return out\n']
+	with open(file_name,'w') as f:
+		for s in new_lines_final:
+			f.write(str(s))
+            
 #mutation('m1_0.py')
