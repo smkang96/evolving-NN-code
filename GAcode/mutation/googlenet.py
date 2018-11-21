@@ -13,7 +13,7 @@ from basic_blocks import *
 
 class Net(nn.Module):
     def __init__(self):
-        super(NET, self).__init__()
+        super(Net, self).__init__()
         self.pre_layers_2 = google_basic_block_2(3, 192)
         self.a3_2 = Inception_2(192, 256, 64,  96, 128, 16, 32, 32)
         self.b3_2 = Inception_2(256, 480,128, 128, 192, 32, 96, 64)

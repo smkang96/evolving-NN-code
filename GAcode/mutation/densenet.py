@@ -18,7 +18,7 @@ from basic_blocks import *
 
 class Net(nn.Module):
     def __init__(self):
-        super(NET, self).__init__()
+        super(Net, self).__init__()
         self.conv1_5 = nn.Conv2d(3, 24, kernel_size=3, padding=1,bias=False)
         self.dense1_5 = make_dense_5(24,'+192', 12, 16, True)
         self.trans1_5 = Transition_5(216, 108)

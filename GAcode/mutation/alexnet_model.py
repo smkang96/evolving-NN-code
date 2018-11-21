@@ -5,7 +5,7 @@ import torch.nn.functional as F
 
 class Net(nn.Module):
 	def __init__(self):
-		super(NET, self).__init__()
+		super(Net, self).__init__()
 		self.layer1 = AlexBlock(3, 64, 11, 4, 2)
 		self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2)
 		self.layer2 = AlexBlock(64, 192, 5, padding=2)

@@ -6,7 +6,7 @@ import torch.nn.functional as F
 
 class Net(nn.Module):
     def __init__(self):
-        super(NET, self).__init__()
+        super(Net, self).__init__()
         self.layerM_01 = ConvBN_mobilenet(3, 32, 2)
         self.layerM_02 = ConvDW_mobilenet(32, 64, 1)
         self.layerM_03 = ConvDW_mobilenet(64, 128, 1)
