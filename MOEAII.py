@@ -133,23 +133,27 @@ class NSGAII:
         Make new population Q, offspring of P. 
         '''
         Q = []
-        
+        # Do make_new_pop function until length of Q list reaches the same of length of P list. 
         while len(Q) != len(P):
             selected_solutions = [None, None]
             
             while selected_solutions[0] == selected_solutions[1]:
                 for i in range(2):
-                    s1 = random.choice(P)
+                    # Set s1 and s2 different, selecting more appropriate one using crowded_comparison.
+                    s1 = random.choice(P) 
                     s2 = s1
                     while s1 == s2:
                         s2 = random.choice(P)
-                    
                     if crowded_comparison(s1, s2) > 0:
                         selected_solutions[i] = s1
-                        
                     else:
                         selected_solutions[i] = s2
-            
+
+            Q.append(selected_solutions[0])
+
+            """
+            # We do not need crossover and mutation at MOEA this time
+
             if random.random() < self.crossover_rate:
                 child_solution = selected_solutions[0].crossover(selected_solutions[1])
                 
@@ -157,8 +161,9 @@ class NSGAII:
                     child_solution.mutate()
                     
                 child_solution.evaluate_solution()
-                
+
                 Q.append(child_solution)
+                """
         
         return Q
 
@@ -166,13 +171,11 @@ class NSGAII:
         '''
         Run NSGA-II. 
         '''
-        for s in P:
-            s.evaluate_solution()
         
         Q = []
         
         for i in range(num_generations):
-            print ("Iteracao ", i)
+            print ("Iteration ", i)
              
             R = []
             R.extend(P)
@@ -198,6 +201,8 @@ class NSGAII:
                 del P[population_size:]
                 
             Q = self.make_new_pop(P)
+            
+        return Q[:population_size/2]
             
 """
 if __name__ == '__main__':
