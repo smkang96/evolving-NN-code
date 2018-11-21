@@ -167,42 +167,37 @@ class NSGAII:
         
         return Q
 
-    def run(self, P, population_size, num_generations):
+    def run(self, P, population_size):
         '''
         Run NSGA-II. 
         '''
         
         Q = []
+                     
+        R = []
+        R.extend(P)
+        R.extend(Q)
         
-        for i in range(num_generations):
-            print ("Iteration ", i)
-             
-            R = []
-            R.extend(P)
-            R.extend(Q)
+        fronts = self.fast_nondominated_sort(R)
+        
+        del P[:]
+        
+        for front in fronts.values():
+            if len(front) == 0:
+                break
             
-            fronts = self.fast_nondominated_sort(R)
+            self.crowding_distance_assignment(front);
+            P.extend(front)
             
-            del P[:]
-            
-            for front in fronts.values():
-                if len(front) == 0:
-                    break
-                
-                self.crowding_distance_assignment(front);
-                P.extend(front)
-                
-                if len(P) >= population_size:
-                    break
-            
-            self.sort_crowding(P)
-            
-            if len(P) > population_size:
-                del P[population_size:]
-                
-            Q = self.make_new_pop(P)
-            
-        return Q[:population_size/2]
+            if len(P) >= population_size:
+                break
+        
+        self.sort_crowding(P)
+        
+        if len(P) > population_size/2:
+            del P[population_size/2:]
+
+        return P
             
 """
 if __name__ == '__main__':
