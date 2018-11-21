@@ -76,7 +76,7 @@ def crossover(parent1, parent2, gid, genpath = './newgen_dir/'):
 
 
 	#choose a random point in forward1 to cut and add crossover part to child
-	idx1 = random.randint(0, len(for1))
+	idx1 = random.randint(1, len(for1))
 	child_for_tmp = child_for_tmp + for1[:idx1]
 
 	#add necessary init from parent1
@@ -108,7 +108,7 @@ def crossover(parent1, parent2, gid, genpath = './newgen_dir/'):
 	'''
 	first = True
 	#choose and add necessary info from parent2
-	idx2 = random.randint(0, len(for2))
+	idx2 = random.randint(1, len(for2))
 	child_for_tmp = child_for_tmp + for2[idx2:]
 
 	for statement in child_for_tmp[idx1:]:
