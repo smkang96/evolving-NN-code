@@ -28,7 +28,7 @@ class Net(nn.Module):
 	def __init__(self):
 		super(Net, self).__init__()
 
-		self.layer1_9 = HighwayBlock(64)
+		self.layer1_9 = HighwayBlock_9(64)
 	def forward(self, x):
 		out = self.layer1_9(x)
 		out = self.layer1_9(x)

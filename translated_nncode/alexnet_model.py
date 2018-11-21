@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 class AlexBlock_7(nn.Module):
-	def __init__(self, inp, outp, k_size, stride=1, padding):
+	def __init__(self, inp, outp, k_size, stride, padding):
 		self.block = nn.Sequential(
 			nn.Conv2d(inp, outp, kernel_size = k_size, stride = stride, padding=padding),
 			nn.ReLU(inplace=True),
@@ -29,13 +29,13 @@ class Net(nn.Module):
 	def __init__(self):
 		super(Net, self).__init__()
 
-		self.layer1_7 = AlexBlock(3, 64, 11, 4, 2)
+		self.layer1_7 = AlexBlock_7(3, 64, 11, 4, 2)
 		self.maxpool_7 = nn.MaxPool2d(kernel_size=3, stride=2)
-		self.layer2_7 = AlexBlock(64, 192, 5, padding=2)
-		self.layer3_7 = AlexBlock(192, 384, 3, padding=1)
-		self.layer4_7 = AlexBlock(384, 256, 3, padding=1)
-		self.layer5_7 = AlexBlock(256, 256, 3, padding=1)
-		self.classifier_7 = AlexClassifier(10)
+		self.layer2_7 = AlexBlock_7(64, 192, 5, 1, 2)
+		self.layer3_7 = AlexBlock_7(192, 384, 3, 1, 1)
+		self.layer4_7 = AlexBlock_7(384, 256, 3, 1, 1)
+		self.layer5_7 = AlexBlock_7(256, 256, 3, 1, 1)
+		self.classifier_7 = AlexClassifier_7(10)
 
 	def forward(self, x):
 		out = self.layer1_7(x)
