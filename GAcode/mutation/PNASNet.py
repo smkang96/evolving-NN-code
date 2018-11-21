@@ -18,8 +18,8 @@ class Net(nn.Module):
         self.layer1_6 = PNAS_make_layer_6(44, 44, num_cells=6)
         self.layer2_6 = PNAS_downsample_6(44, 88)
         self.layer3_6 = PNAS_make_layer_6(88,88, num_cells=6)
-        self.layer4_6 = PNAS_downsample_6(88,88)
-        self.layer5_6 = PNAS_make_layer_6(88,88, num_cells=6)
+        self.layer4_6 = PNAS_downsample_6(88,176)
+        self.layer5_6 = PNAS_make_layer_6(176,176, num_cells=6)
         #forward
 
 
