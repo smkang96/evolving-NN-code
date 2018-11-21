@@ -11,9 +11,9 @@ from basic_blocks import *
 
 
 
-class NET(nn.Module):
+class Net(nn.Module):
     def __init__(self):
-        super(PNASNet, self).__init__()
+        super(Net, self).__init__()
         self.basic_block_6 = PNAS_basic_block_6(3,44)
         self.layer1_6 = PNAS_make_layer_6(44, 44, num_cells=6)
         self.layer2_6 = PNAS_downsample_6(44, 88)
