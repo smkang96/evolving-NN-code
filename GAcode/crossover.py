@@ -2,6 +2,7 @@ import random
 import re
 delim = '[= ( )]'
 number = '0123456789'
+genpath = './../newgen_dir/'
 """
 Finds the forward part of the code and does crossover on the two parents to produce one simple child
 """
@@ -65,7 +66,7 @@ def find_forward(tot_txt):
 
 #Assume parent is title a python file of functional neural network code
 def crossover(parent1, parent2, gid):
-	fname = 'n' +  gid + '.py'
+	fname = genpath + 'n' +  gid + '.py'
 	child_init = []
 	child_for = []
 	child_for_tmp = []
