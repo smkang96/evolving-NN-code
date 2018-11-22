@@ -285,16 +285,18 @@ def mutation(file_name,deletion_prob=0.5):
 	forward_lines,for_st,for_end = get_forward_lines(new_lines)
 	new_lines_final = new_lines[0:for_st-1] + ["        self.avgpool_end = nn.AvgPool2d("+str(length)+", stride=1)\n"]+["        self.linear_end = nn.Linear("+str(channel_size)+',10)\n']
 	new_lines_final = new_lines_final+ new_lines[for_st-1:] + ["        out = self.avgpool_end(out)\n"] + ["        out = out.view(out.size(0), -1)\n"] + ['        out = self.linear_end(out)\n']+['        return out\n']
-
-	with open(file_name,'w') as f:
+	splits = file_name.split('/')
+	splits[2] = 'mod_' + splits[2]
+	new_name = '/'.join(splits)
+	with open(new_name, 'w') as f:
 		for s in new_lines_final:
 			f.write(str(s))
 	time.sleep(1)
-	if os.path.exists('./mutation/tmp.pyc'):
-		os.remove('./mutation/tmp.pyc')
 	if os.path.exists('./mutation/tmp.py'):
 		os.remove('./mutation/tmp.py')
-	return file_name
+	if os.path.exists('./mutation/tmp.pyc'):
+		os.remove('./mutation/tmp.pyc')
+	return new_name
 
 def no_mutation(file_name):
 	with open(file_name, 'r') as f:
@@ -317,7 +319,10 @@ def no_mutation(file_name):
 	forward_lines,for_st,for_end = get_forward_lines(new_lines)
 	new_lines_final = new_lines[0:for_st-1] + ["        self.avgpool_end = nn.AvgPool2d("+str(length)+", stride=1)\n"]+["        self.linear_end = nn.Linear("+str(channel_size)+',10)\n']
 	new_lines_final = new_lines_final+ new_lines[for_st-1:] + ["        out = self.avgpool_end(out)\n"] + ["        out = out.view(out.size(0), -1)\n"] + ['        out = self.linear_end(out)\n']+['        return out\n']
-	with open(file_name,'w') as f:
+	splits = file_name.split('/')
+	splits[2] = 'mod_' + splits[2]
+	new_name = '/'.join(splits)
+	with open(new_name, 'w') as f:
 		for s in new_lines_final:
 			f.write(str(s))
 	time.sleep(1)
@@ -325,6 +330,6 @@ def no_mutation(file_name):
 		os.remove('./mutation/tmp.py')
 	if os.path.exists('./mutation/tmp.pyc'):
 		os.remove('./mutation/tmp.pyc')
-	return file_name
+	return new_name
             
 #mutation('m1_0.py')

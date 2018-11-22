@@ -117,13 +117,13 @@ class NSGAII:
             dist_dict[p] = 0
         
         for obj_index in range(self.num_objectives):
-            front = sorted(front, key=lambda x: x[obj_index])
+            front = sorted(front, key=lambda x: x[obj_index+1])
             
             dist_dict[front[0]] = float('inf')
             dist_dict[front[len(front) - 1]] = float('inf')
             
             for i in range(1, len(front) - 1):
-                dist_dict[front[i]] += (front[i + 1][obj_index] - front[i - 1][obj_index])
+                dist_dict[front[i]] += (front[i + 1][obj_index+1] - front[i - 1][obj_index+1])
         return dist_dict
 
     def make_new_pop(self, P):

@@ -17,22 +17,27 @@ class Breeder(object):
         curr_pop = self._init_pop[:] # copy
         for g_idx in range(gen_num):
             kids = []
-            for i_idx in range(self._pop_size-len(curr_pop)):
-                # try:
-                poppa = random.choice(curr_pop)
-                momma = random.choice(curr_pop)
-                print poppa, momma
-                kid = crossover.crossover(poppa, momma, '%d_%d' % (g_idx, i_idx))
-                print kid
-                if self._mut_prob > random.random():
-                    kid = mutation(kid)
-                else:
-                    kid = no_mutation(kid)
-                kids.append(kid)
-                # except Exception as e:
-                #     print '%d_%d' % (g_idx, i_idx), 'dead'
-                #     print 'death cause:', str(e)
-                #     continue
+            i_idx = -1
+            while len(kids) < self._pop_size-len(curr_pop):
+                i_idx += 1
+                try:
+                    poppa = random.choice(curr_pop)
+                    momma = random.choice(curr_pop)
+                    print poppa, momma
+                    kid = crossover.crossover(poppa, momma, '%d_%d' % (g_idx, i_idx))
+                    print kid
+                    if self._mut_prob > random.random():
+                        kid = mutation(kid)
+                    else:
+                        kid = no_mutation(kid)
+                    kids.append(kid)
+                except RuntimeError:
+                    print 'death due to wrong size'
+                    continue
+                except Exception as e:
+                    print '%d_%d' % (g_idx, i_idx), 'dead'
+                    print 'death cause:', str(e)
+                    continue
             curr_pop += kids
             
             for name in curr_pop:
@@ -53,6 +58,7 @@ class Breeder(object):
                 eval_results.append(indiv_score)
         
             selected = self._nsgaii_sorter.run(eval_results, self._pop_size)
+            curr_pop = selected
         
         for chosen in selected:
             print 'Honorable chosen neural network %s' % chosen
@@ -70,7 +76,7 @@ INIT_POP = [
 ]
 '''
 
-INIT_POP = ['./mutation/googlenet.py', './mutation/mobilenet_model.py']
+INIT_POP = ['./mutation/googlenet.py', './mutation/ACGAN_D_model.py']
         
-b = Breeder(INIT_POP, growth_time = 15, pop_size = 15)
-b.breed(1)
+b = Breeder(INIT_POP, growth_time = 120, pop_size = 15)
+b.breed(10)

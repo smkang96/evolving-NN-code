@@ -14,6 +14,10 @@ import imp
 
 ## Evaluation settings
 
+def to_var(x):
+    x = x.cuda()
+    return Variable(x)
+
 class Evaluator(object):
     def __init__(self, allowed_train_time):
         self._train_time = allowed_train_time
@@ -23,13 +27,13 @@ class Evaluator(object):
 
         trainset = torchvision.datasets.CIFAR10(root='./data', train=True,
                                                 download=True, transform=transform)
-        self._trainloader = torch.utils.data.DataLoader(trainset, batch_size=4,
-                                                  shuffle=True, num_workers=2)
+        self._trainloader = torch.utils.data.DataLoader(trainset, batch_size=64,
+                                                  shuffle=True, num_workers=6)
 
         testset = torchvision.datasets.CIFAR10(root='./data', train=False,
                                                download=True, transform=transform)
-        self._testloader = torch.utils.data.DataLoader(testset, batch_size=16,
-                                                 shuffle=False, num_workers=4)
+        self._testloader = torch.utils.data.DataLoader(testset, batch_size=128,
+                                                 shuffle=False, num_workers=6)
 
     def _indiv_evaluator(self, filename):
         import time # ok, really weird error
@@ -38,6 +42,7 @@ class Evaluator(object):
 
         ## Network and Optimizer
         net = module.Net()
+        net.cuda()
         criterion = nn.CrossEntropyLoss()
         optimizer = torch.optim.Adam(net.parameters(), lr=0.001)
 
@@ -48,6 +53,8 @@ class Evaluator(object):
             for i, data in enumerate(self._trainloader, 0):
                 # get the inputs
                 inputs, labels = data
+                inputs = to_var(inputs)
+                labels = to_var(labels)
 
                 # zero the parameter gradients
                 optimizer.zero_grad()
@@ -70,6 +77,8 @@ class Evaluator(object):
         with torch.no_grad():
             for d_i, data in enumerate(self._testloader):
                 images, labels = data
+                images = to_var(images)
+                labels = to_var(labels)
                 outputs = net(images)
                 _, predicted = torch.max(outputs.data, 1)
                 total += labels.size(0)
