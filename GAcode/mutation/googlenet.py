@@ -26,7 +26,6 @@ class Net(nn.Module):
         self.a5_2 = Inception_2(832, 832,256, 160, 320, 32, 128, 128)
         self.b5_2 = Inception_2(832, 1024,384, 192, 384, 48, 128, 128)
         #forward
-
     def forward(self, x):
         out = self.pre_layers_2(x)
         out = self.a3_2(out)
@@ -40,7 +39,7 @@ class Net(nn.Module):
         out = self.maxpool_2(out)
         out = self.a5_2(out)
         out = self.b5_2(out)
-        # return out 
+        #return 
 
 
 

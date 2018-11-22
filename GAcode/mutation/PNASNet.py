@@ -21,8 +21,6 @@ class Net(nn.Module):
         self.layer4_6 = PNAS_downsample_6(88,176)
         self.layer5_6 = PNAS_make_layer_6(176,176, num_cells=6)
         #forward
-
-
     def forward(self, x):
         out = self.basic_block_6(x)
         out = self.layer1_6(out)

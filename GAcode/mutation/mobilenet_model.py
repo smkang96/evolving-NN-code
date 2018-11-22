@@ -22,7 +22,6 @@ class Net(nn.Module):
         self.layerM_13 = ConvDW_mobilenet(512, 1024, 2)
         self.layerM_14 = ConvDW_mobilenet(1024, 1024, 1)
         #forward
-
     def forward(self, x):
         out = self.layerM_01(x)
         out = self.layerM_02(out)
@@ -38,4 +37,4 @@ class Net(nn.Module):
         out = self.layerM_12(out)
         out = self.layerM_13(out)
         out = self.layerM_14(out)
-        # return out 
+        #return

@@ -13,7 +13,7 @@ class Net(nn.Module):
         self.layer2 = ResLayer(64, 128, 4, stride=2)
         self.layer3 = ResLayer(128, 256, 6, stride=2)
         self.layer4 = ResLayer(256, 512, 3, stride=2)
-# forward     
+#forward     
     def forward(self, x):
         out = self.first_lyr(x)
         out = self.maxpool(out)
@@ -22,5 +22,5 @@ class Net(nn.Module):
         out = self.layer3(out)
         out = self.layer4(out)
         out = self.avgpool(out)
-# return out 
+# return
         

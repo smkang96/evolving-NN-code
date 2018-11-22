@@ -13,7 +13,6 @@ class Net(nn.Module):
 		self.layer4 = AlexBlock(384, 256, 3, padding=1)
 		self.layer5 = AlexBlock(256, 256, 3, padding=1)
 		# forward
-
 	def forward(self, x):
 		out = self.layer1(x)
 		out = self.maxpool(out)
@@ -23,4 +22,4 @@ class Net(nn.Module):
 		out = self.layer4(out)
 		out = self.layer5(out)
 		out = self.maxpool(out)
-		#return out 
+		#return

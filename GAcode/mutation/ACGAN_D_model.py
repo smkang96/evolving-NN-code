@@ -13,7 +13,7 @@ class Net(nn.Module):
         self.conv4 = ConvDrop_ACGAN(64, 128, 1, 0)
         self.conv5 = ConvDrop_ACGAN(128, 256, 2, 1)
         self.conv6 = ConvDrop_ACGAN(256, 512, 1, 0)
-        # forward
+        #forward
     def forward(self, x):
         out = self.conv1(x)
         out = self.conv2(out)

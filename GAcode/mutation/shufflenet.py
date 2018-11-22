@@ -20,7 +20,6 @@ class NET(nn.Module):
         #forward 
         self.linear_3 = nn.Linear(800, 10)
         self.avg_pool_2 = nn.AvgPool2d(4)
-
     def forward(self, x):
         out = self.basic_block_3(x)
         out = self.layer1_3(out)

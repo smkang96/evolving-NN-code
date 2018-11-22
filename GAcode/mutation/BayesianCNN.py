@@ -18,11 +18,10 @@ class Net(nn.Module):
         self.block2 = BayesBlock_4(32, 64,5)
         self.block3 = BayesBlock_4(64, 128, 5)
         #forward
-
     def forward(self, x):
         out = self.block1(x)
         out = self.block2(out)
         out = self.block3(out)
-        #return out
+        #return
 
 
