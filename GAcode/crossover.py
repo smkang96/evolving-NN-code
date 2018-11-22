@@ -13,23 +13,40 @@ def find_forward(tot_txt):
 	tot_txt.reverse()
 	for_list = []
 	net_list = []
+	starting_pos = 0
+	end_pos = 0
+	'''
+	for i in range(len(tot_txt)):
+		if '__init__' in str(tot_txt[i]):
+			starting_pos = i+1
+		if 'forward' in str(tot_txt[i]):
+			end_pos = i-1
+			net_list = tot_txt[starting_pos:end_pos]
+	starting_pos = 0
+	end_pos = 0
+	for i in range(len(tot_txt)):
+		if 'forward' in str(tot_txt[i]):
+			starting_pos = i+1
+		if 'return' in str(tot_txt[i]):
+			end_pos = i-1
+			for_list = tot_txt[starting_pos:end_pos]
+	print(for_list, net_list)
+	return for_list, net_list
+	'''
 	retflag = False
 	forflag = False
 	for line in tot_txt:
-		if "return" in line:
+		if "#return" in line or '# return' in line:
 			retflag = True
 			continue
-		'''
-		if 'forward' in line:
+		if '#forward' in line or '# forward' in line:
 			forflag = True
 			continue
-		'''
 		# #return has been passed, start adding lines to forward
 		if retflag:
 			#reached def forward, stop copying
 			if 'forward' in line:
 				retflag = False
-				forflag = True
 				continue
 			else:
 				for_list.insert(0, line.strip())
@@ -42,32 +59,8 @@ def find_forward(tot_txt):
 				if not line.strip():
 					continue
 				net_list.insert(0, line.strip())
-	'''
-	for line in tot_txt:
-		#assume super is the line before init statements start
-		if "super" not in line:
-			#ignore final return line, will be filled later with appropriate variable name
-			if "return" in line:
-				continue
-			else:
-				#remove empty lines
-				if not line.strip():
-					continue
-				if line.startswith('#'):
-					continue
-				for_list.insert(0, line.strip())
-		else:
-			break
-	idx = -1
-	for statement in for_list:
-		if 'forward' in statement:
-			idx = for_list.index(statement)
-
-	net_list = for_list[:idx] #last few lines are from forward
-	for_list = for_list[idx + 1:] #first few lines are from init
-	'''
 	return for_list, net_list
-
+	
 #Assume parent is title a python file of functional neural network code
 def crossover(parent1, parent2, gid, genpath = './newgen_dir/'):
 	fname = genpath + 'n' +  gid + '.py'
@@ -87,6 +80,7 @@ def crossover(parent1, parent2, gid, genpath = './newgen_dir/'):
 	#add necessary init from parent1
 	count = 0
 	for statement in child_for_tmp:
+		statement = statement.strip()
 		for_line = list(filter(None, re.split(delim, statement)))
 
 		#method name is always on second (index 1)
@@ -102,6 +96,7 @@ def crossover(parent1, parent2, gid, genpath = './newgen_dir/'):
 				init_line = '='.join(init_line)
 				count += 1
 				#add init_line to child_init
+				init_line = init_line.strip()
 				child_init.append(init_line)
 				#append for_line to child_for
 				child_for.append(for_line)
@@ -117,6 +112,7 @@ def crossover(parent1, parent2, gid, genpath = './newgen_dir/'):
 	child_for_tmp = child_for_tmp + for2[idx2:]
 
 	for statement in child_for_tmp[idx1:]:
+		statement = statement.strip()
 		for_line = list(filter(None, re.split(delim, statement)))
 		for_name = for_line[1]
 
@@ -149,7 +145,7 @@ def crossover(parent1, parent2, gid, genpath = './newgen_dir/'):
 				init_line[0] = init_line[0].strip() + '_' + str(count) + ' '
 				init_line = '='.join(init_line)
 				count += 1
-
+				init_line = init_line.strip()
 				child_init.append(init_line)
 				child_for.append(for_line)
 
@@ -177,5 +173,5 @@ def crossover(parent1, parent2, gid, genpath = './newgen_dir/'):
 	return fname
 
 if __name__ == '__main__':
-    result = crossover('./mutation/densenet.py', './mutation/densenet.py', '1_0')
+    result = crossover('./mutation/newgen_dir/mod_n0_0.py', './mutation/newgen_dir/mod_n0_0.py', '1_0')
     print(result)
