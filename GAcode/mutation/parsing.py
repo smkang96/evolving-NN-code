@@ -11,6 +11,9 @@ import torchvision
 import torchvision.transforms as transforms
 import torch.nn.functional as F
 
+import os
+import time
+
 # with open('densenet.py', 'r') as f:
 # 	lines = f.readlines()
 file_name_list = ('googlenet.py','densenet.py','shufflenet.py','BayesianCNN.py','PNASNet.py','ACGAN_D_model.py','vgg19_model.py','mobilenet_model.py','resnet_model.py')
@@ -262,12 +265,18 @@ def mutation(file_name,deletion_prob=0.5):
 		new_lines = rand_insert(lines, block_dic)
 	new_lines = dim_check(new_lines)
 	new_lines = x_out_check(new_lines)
-	with open('tmp.py','w') as f:
+	if os.path.exists('./mutation/tmp.pyc'):
+		os.remove('./mutation/tmp.pyc')
+	if os.path.exists('./mutation/tmp.py'):
+		os.remove('./mutation/tmp.py')
+	with open('./mutation/tmp.py','w') as f:
 		for s in new_lines:
 			f.write(str(s))
 		f.write('        return out')
+        f.close()
 	#from tmp import *
-	import tmp 
+	import tmp
+	reload(tmp)
 	model = tmp.Net().to(device)
 	#model = NET().to(device)
 	channel_size, length = get_size(model)
@@ -280,16 +289,28 @@ def mutation(file_name,deletion_prob=0.5):
 	with open(file_name,'w') as f:
 		for s in new_lines_final:
 			f.write(str(s))
+	time.sleep(1)
+	if os.path.exists('./mutation/tmp.pyc'):
+		os.remove('./mutation/tmp.pyc')
+	if os.path.exists('./mutation/tmp.py'):
+		os.remove('./mutation/tmp.py')
+	return file_name
 
 def no_mutation(file_name):
 	with open(file_name, 'r') as f:
 		new_lines = f.readlines()
 	device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-	with open('tmp.py','w') as f:
+	if os.path.exists('./mutation/tmp.py'):
+		os.remove('./mutation/tmp.py')
+	if os.path.exists('./mutation/tmp.pyc'):
+		os.remove('./mutation/tmp.pyc')
+	with open('./mutation/tmp.py','w') as f:
 		for s in new_lines:
 			f.write(str(s))
 		f.write('        return out')
-	import tmp 
+		f.close()
+	import tmp
+	reload(tmp)
 	model = tmp.Net().to(device)
 	channel_size, length = get_size(model)
 	init_lines, in_st, in_end = get_init_lines(new_lines)
@@ -299,5 +320,11 @@ def no_mutation(file_name):
 	with open(file_name,'w') as f:
 		for s in new_lines_final:
 			f.write(str(s))
+	time.sleep(1)
+	if os.path.exists('./mutation/tmp.py'):
+		os.remove('./mutation/tmp.py')
+	if os.path.exists('./mutation/tmp.pyc'):
+		os.remove('./mutation/tmp.pyc')
+	return file_name
             
 #mutation('m1_0.py')
