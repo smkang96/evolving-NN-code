@@ -274,6 +274,11 @@ def mutation(file_name,deletion_prob=0.5):
 			f.write(str(s))
 		f.write('        return out')
         f.close()
+	with open('./debug/' + file_name.split('/')[2],'w') as f:
+		for s in new_lines:
+			f.write(str(s))
+		f.write('        return out')
+        f.close()
 	#from tmp import *
 	import tmp
 	reload(tmp)
@@ -311,6 +316,11 @@ def no_mutation(file_name):
 			f.write(str(s))
 		f.write('        return out')
 		f.close()
+	with open('./debug/' + file_name.split('/')[2],'w') as f:
+		for s in new_lines:
+			f.write(str(s))
+		f.write('        return out')
+        f.close()
 	import tmp
 	reload(tmp)
 	model = tmp.Net().to(device)

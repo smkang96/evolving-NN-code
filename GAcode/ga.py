@@ -15,8 +15,11 @@ class Breeder(object):
         
     def breed(self, gen_num):
         curr_pop = self._init_pop[:] # copy
+        eval_dict = {}
         for g_idx in range(gen_num):
             kids = []
+            if g_idx == 0:
+                kids += [no_mutation(ip) for ip in curr_pop]
             i_idx = -1
             while len(kids) < self._pop_size-len(curr_pop):
                 i_idx += 1
@@ -24,7 +27,7 @@ class Breeder(object):
                     poppa = random.choice(curr_pop)
                     momma = random.choice(curr_pop)
                     print poppa, momma
-                    kid = crossover.crossover(poppa, momma, '%d_%d' % (g_idx, i_idx))
+                    kid = crossover.crossover(poppa, momma, '%d_%d' % (g_idx, i_idx), genpath='./newgen_dir2/')
                     print kid
                     if self._mut_prob > random.random():
                         kid = mutation(kid)
@@ -38,14 +41,17 @@ class Breeder(object):
                     print '%d_%d' % (g_idx, i_idx), 'dead'
                     print 'death cause:', str(e)
                     continue
-            curr_pop += kids
             
-            for name in curr_pop:
+            for name in curr_pop + kids:
                 print name
             
-            eval_results = []
-            eval_dict = {} # for fun
-            for indiv in curr_pop:
+            if len(eval_dict.keys()) != 0:
+                eval_results = [(name, eval_dict[name][0], eval_dict[name][1]) for name in curr_pop]
+            else:
+                eval_results = []
+            curr_pop += kids
+            # eval_dict = {} # for fun
+            for indiv in kids:
                 print indiv
                 try:
                     indiv_score = self._evaluator._indiv_evaluator(indiv)
@@ -60,9 +66,9 @@ class Breeder(object):
             selected = self._nsgaii_sorter.run(eval_results, self._pop_size)
             curr_pop = selected
         
-        for chosen in selected:
-            print 'Honorable chosen neural network %s' % chosen
-            print 'Score: (%.2f, %.2f)' % (eval_dict[chosen])
+            for chosen in selected:
+                print 'Honorable chosen neural network in gen %d: %s' % (g_idx, chosen)
+                print 'Score: (%.2f, %.2f)' % (eval_dict[chosen])
         
         # print curr_pop
 '''
@@ -76,7 +82,8 @@ INIT_POP = [
 ]
 '''
 
-INIT_POP = ['./mutation/googlenet.py', './mutation/ACGAN_D_model.py']
+INIT_POP = ['./mutation/googlenet.py', './mutation/ACGAN_D_model.py', './mutation/mobilenet_model.py', 
+            './mutation/BayesianCNN.py', './mutation/densenet.py']
         
-b = Breeder(INIT_POP, growth_time = 120, pop_size = 15)
+b = Breeder(INIT_POP, growth_time = 120, pop_size = 20)
 b.breed(10)

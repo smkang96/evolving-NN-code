@@ -49,7 +49,7 @@ class Evaluator(object):
         ## Training: from pytorch tutorial
         print('training...')
         train_start = time.time()
-        for epoch in range(10):
+        for epoch in range(100):
             for i, data in enumerate(self._trainloader, 0):
                 # get the inputs
                 inputs, labels = data
