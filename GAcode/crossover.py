@@ -16,20 +16,17 @@ def find_forward(tot_txt):
 	retflag = False
 	forflag = False
 	for line in tot_txt:
-		if "return" in line:
+		if "#return" or '# return' in line:
 			retflag = True
 			continue
-		'''
-		if 'forward' in line:
+		if '#forward' or '# forward' in line:
 			forflag = True
 			continue
-		'''
 		# #return has been passed, start adding lines to forward
 		if retflag:
 			#reached def forward, stop copying
 			if 'forward' in line:
 				retflag = False
-				forflag = True
 				continue
 			else:
 				for_list.insert(0, line.strip())
