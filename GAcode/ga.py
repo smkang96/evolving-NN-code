@@ -18,18 +18,21 @@ class Breeder(object):
         for g_idx in range(gen_num):
             kids = []
             for i_idx in range(self._pop_size-len(curr_pop)):
-                try:
-                    poppa = random.choice(curr_pop)
-                    momma = random.choice(curr_pop)
-                    kid = crossover.crossover(poppa, momma, '%d_%d' % (g_idx, i_idx))
-                    print kid
-                    if self._mut_prob > random.random():
-                        kid = mutation(kid)
-                    kids.append(kid)
-                except Exception as e:
-                    print '%d_%d' % (g_idx, i_idx), 'dead'
-                    print 'death cause:', str(e)
-                    continue
+                # try:
+                poppa = random.choice(curr_pop)
+                momma = random.choice(curr_pop)
+                print poppa, momma
+                kid = crossover.crossover(poppa, momma, '%d_%d' % (g_idx, i_idx))
+                print kid
+                if self._mut_prob > random.random():
+                    kid = mutation(kid)
+                else:
+                    kid = no_mutation(kid)
+                kids.append(kid)
+                # except Exception as e:
+                #     print '%d_%d' % (g_idx, i_idx), 'dead'
+                #     print 'death cause:', str(e)
+                #     continue
             curr_pop += kids
             
             for name in curr_pop:
@@ -56,15 +59,18 @@ class Breeder(object):
             print 'Score: (%.2f, %.2f)' % (eval_dict[chosen])
         
         # print curr_pop
-
+'''
 INIT_POP = [
-    '../translated_nncode/ACGAN_D_model.py', 
-    '../translated_nncode/alexnet_model.py',
-    '../translated_nncode/BayesianCNN.py',
-    '../translated_nncode/densenet.py',
-    '../translated_nncode/googlenet.py',
-    '../translated_nncode/mobilenet_model.py'
+    './mutation/ACGAN_D_model.py',
+    './mutation/alexnet_model.py',
+    './mutation/BayesianCNN.py',
+    './mutation/densenet.py',
+    './mutation/googlenet.py',
+    './mutation/mobilenet_model.py'
 ]
+'''
+
+INIT_POP = ['./mutation/googlenet.py', './mutation/mobilenet_model.py']
         
 b = Breeder(INIT_POP, growth_time = 15, pop_size = 15)
 b.breed(1)
