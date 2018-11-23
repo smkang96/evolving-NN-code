@@ -121,9 +121,12 @@ class NSGAII:
             
             dist_dict[front[0]] = float('inf')
             dist_dict[front[len(front) - 1]] = float('inf')
+            max_var = abs(front[0][obj_index+1] - front[len(front) - 1][obj_index+1])
             
             for i in range(1, len(front) - 1):
-                dist_dict[front[i]] += (front[i + 1][obj_index+1] - front[i - 1][obj_index+1])
+                dist_val = (front[i + 1][obj_index+1] - front[i - 1][obj_index+1])
+                dist_val /= max_var
+                dist_dict[front[i]] += dist_val
         return dist_dict
 
     def make_new_pop(self, P):
