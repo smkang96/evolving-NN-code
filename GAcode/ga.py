@@ -9,6 +9,9 @@ matplotlib.use('agg')
 import matplotlib.pyplot as plt
 plt.style.use('seaborn')
 
+code_path = './new_constepoch/'
+img_path = './img_constepoch/'
+
 class Breeder(object):
     def __init__(self, init_pop, growth_time=2*60, mut_prob=0.5, pop_size=30):
         self._init_pop = init_pop
@@ -32,7 +35,7 @@ class Breeder(object):
                     poppa = random.choice(curr_pop)
                     momma = random.choice(curr_pop)
                     print poppa, momma
-                    kid = crossover.crossover(poppa, momma, '%d_%d' % (g_idx, i_idx), genpath='./newgen_dir2/')
+                    kid = crossover.crossover(poppa, momma, '%d_%d' % (g_idx, i_idx), genpath=code_path)
                     print kid
                     if self._mut_prob > random.random():
                         kid = mutation(kid)
@@ -73,7 +76,7 @@ class Breeder(object):
             plt.title('Generation %d' % g_idx)
             plt.xlabel('Accuracy (%)')
             plt.ylabel('Inference Time (s)')
-            plt.savefig('./imgs/gen%d_pareto.png' % g_idx)
+            plt.savefig(img_path + ('/gen%d_pareto.png' % g_idx))
             plt.clf()
             curr_pop = selected
         
