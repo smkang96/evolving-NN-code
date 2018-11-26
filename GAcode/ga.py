@@ -7,7 +7,7 @@ import random
 import matplotlib
 matplotlib.use('agg')
 import matplotlib.pyplot as plt
-plt.style.use('seaborn')
+#plt.style.use('seaborn')
 
 code_path = './new_constepoch/'
 img_path = './img_constepoch/'
@@ -27,31 +27,34 @@ class Breeder(object):
         for g_idx in range(gen_num):
             kids = []
             if g_idx == 0:
-                kids += [no_mutation(ip) for ip in curr_pop]
+                try:
+                    kids += [no_mutation(ip) for ip in curr_pop]
+                except:
+                    print("no mu fail for MNIST")
             i_idx = -1
             while len(kids) < self._pop_size-len(curr_pop):
                 i_idx += 1
                 try:
                     poppa = random.choice(curr_pop)
                     momma = random.choice(curr_pop)
-                    print poppa, momma
+                    print(poppa, momma)
                     kid = crossover.crossover(poppa, momma, '%d_%d' % (g_idx, i_idx), genpath=code_path)
-                    print kid
+                    print(kid)
                     if self._mut_prob > random.random():
                         kid = mutation(kid)
                     else:
                         kid = no_mutation(kid)
                     kids.append(kid)
                 except RuntimeError:
-                    print 'death due to wrong size'
+                    print ('death due to wrong size')
                     continue
                 except Exception as e:
-                    print '%d_%d' % (g_idx, i_idx), 'dead'
-                    print 'death cause:', str(e)
+                    print ('%d_%d' % (g_idx, i_idx), 'dead')
+                    print ('death cause:', str(e))
                     continue
             
             for name in curr_pop + kids:
-                print name
+                print(name)
             
             if len(eval_dict.keys()) != 0:
                 eval_results = [(name, eval_dict[name][0], eval_dict[name][1]) for name in curr_pop]
@@ -60,12 +63,12 @@ class Breeder(object):
             curr_pop += kids
             # eval_dict = {} # for fun
             for indiv in kids:
-                print indiv
+                print(indiv)
                 try:
                     indiv_score = self._evaluator._indiv_evaluator(indiv)
                 except Exception as e:
-                    print 'indiv born with defect, killed.'
-                    print 'death cry:', str(e)
+                    print ('indiv born with defect, killed.')
+                    print ('death cry:', str(e))
                     indiv_score = (-1, 10000000)
                 eval_dict[indiv] = indiv_score
                 indiv_score = (indiv, indiv_score[0], indiv_score[1])
@@ -81,8 +84,8 @@ class Breeder(object):
             curr_pop = selected
         
             for chosen in selected:
-                print 'Honorable chosen neural network in gen %d: %s' % (g_idx, chosen)
-                print 'Score: (%.2f, %.2f)' % (eval_dict[chosen])
+                print ('Honorable chosen neural network in gen %d: %s' % (g_idx, chosen))
+                print ('Score: (%.2f, %.2f)' % (eval_dict[chosen]))
                 f.write(chosen + ',')
                 f.write('%.2f,%.2f' % (eval_dict[chosen]) + '\n')
         
@@ -102,5 +105,5 @@ INIT_POP = ['./mutation/googlenet.py', './mutation/ACGAN_D_model.py', './mutatio
             './mutation/BayesianCNN.py', './mutation/densenet.py', './mutation/PNASNet.py', 
             './mutation/shufflenet.py', './mutation/vgg19_model.py']
         
-b = Breeder(INIT_POP, growth_time = 5*60, pop_size = 30)
+b = Breeder(INIT_POP, growth_time = 60, pop_size = 30)
 b.breed(10, result_file = 'expensive_results.csv')

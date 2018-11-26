@@ -21,19 +21,23 @@ def to_var(x):
 class Evaluator(object):
     def __init__(self, allowed_train_time):
         self._train_time = allowed_train_time
-        transform = transforms.Compose(
-            [transforms.ToTensor(),
-             transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
-
-        trainset = torchvision.datasets.CIFAR10(root='./data', train=True,
-                                                download=True, transform=transform)
-        self._trainloader = torch.utils.data.DataLoader(trainset, batch_size=64,
-                                                  shuffle=True, num_workers=6)
-
-        testset = torchvision.datasets.CIFAR10(root='./data', train=False,
-                                               download=True, transform=transform)
-        self._testloader = torch.utils.data.DataLoader(testset, batch_size=128,
-                                                 shuffle=False, num_workers=6)
+#        transform = transforms.Compose(
+#            [transforms.ToTensor(),
+#             transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+#
+#        trainset = torchvision.datasets.CIFAR10(root='./data', train=True,
+#                                                download=True, transform=transform)
+#        self._trainloader = torch.utils.data.DataLoader(trainset, batch_size=64,
+#                                                  shuffle=True, num_workers=6)
+#
+#        testset = torchvision.datasets.CIFAR10(root='./data', train=False,
+#                                               download=True, transform=transform)
+#        self._testloader = torch.utils.data.DataLoader(testset, batch_size=128,
+#                                                 shuffle=False, num_workers=6)
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        kwargs = {'num_workers': 1, 'pin_memory': True} if torch.cuda.is_available() else {}
+        self._trainloader = torch.utils.data.DataLoader(torchvision.datasets.MNIST('../data', train=True, download=True,transform=transforms.Compose([transforms.ToTensor(),transforms.Normalize((0.1307,), (0.3081,))])),batch_size=64, shuffle=True, **kwargs)
+        self._testloader = torch.utils.data.DataLoader(torchvision.datasets.MNIST('../data', train=False, transform=transforms.Compose([transforms.ToTensor(),transforms.Normalize((0.1307,), (0.3081,))])),batch_size=128, shuffle=True, **kwargs)
 
     def _indiv_evaluator(self, filename):
         import time # ok, really weird error
