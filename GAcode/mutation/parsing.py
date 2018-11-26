@@ -10,6 +10,7 @@ import torch.optim as optim
 import torchvision
 import torchvision.transforms as transforms
 import torch.nn.functional as F
+from importlib import reload
 
 import os
 import time
@@ -178,8 +179,9 @@ def dim_check(lines):
 	for i in range(in_st,in_end+1):
 		input_size = get_IO_size(lines[i])
 		if(i==in_st):
-			if(input_size!=3):
-				lines[i] = change_input_size(lines[i],3)
+			if(input_size!=1):
+				print(lines[i])
+				lines[i] = change_input_size(lines[i],1)
 		else:
 			# print(lines[i], input_size, output_size)
 			if(input_size== 'max'):
@@ -227,18 +229,22 @@ def x_out_check(lines):
 def get_size(model):
 	device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 	kwargs = {'num_workers': 1, 'pin_memory': True} if torch.cuda.is_available() else {}
-	transform_train = transforms.Compose([
-		transforms.RandomCrop(32, padding=4),
-		transforms.RandomHorizontalFlip(),
-		transforms.ToTensor(),
-		transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
-	])
-	transform_test = transforms.Compose([
-		transforms.ToTensor(),
-		transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
-	])
-	trainset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform_train)
-	train_loader = torch.utils.data.DataLoader(trainset, batch_size=128, shuffle=True, num_workers=2)
+	train_loader = torch.utils.data.DataLoader(torchvision.datasets.MNIST('../data', train=True, download=True,transform=transforms.Compose([transforms.ToTensor(),transforms.Normalize((0.1307,), (0.3081,))])),batch_size=64, shuffle=True, **kwargs)
+    #test_loader = torch.utils.data.DataLoader(torchvision.datasets.MNIST('../data', train=False, transform=transforms.Compose([transforms.ToTensor(),transforms.Normalize((0.1307,), (0.3081,))])),batch_size=128, shuffle=True, **kwargs)
+	# device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+	# kwargs = {'num_workers': 1, 'pin_memory': True} if torch.cuda.is_available() else {}
+	# transform_train = transforms.Compose([
+	# 	transforms.RandomCrop(32, padding=4),
+	# 	transforms.RandomHorizontalFlip(),
+	# 	transforms.ToTensor(),
+	# 	transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
+	# ])
+	# transform_test = transforms.Compose([
+	# 	transforms.ToTensor(),
+	# 	transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
+	# ])
+	# trainset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform_train)
+	# train_loader = torch.utils.data.DataLoader(trainset, batch_size=128, shuffle=True, num_workers=2)
 	#model = NET().to(device)
 	model.train()
 	channel_size = 0
@@ -269,16 +275,16 @@ def mutation(file_name,deletion_prob=0.5):
 		os.remove('./mutation/tmp.pyc')
 	if os.path.exists('./mutation/tmp.py'):
 		os.remove('./mutation/tmp.py')
-	with open('./mutation/tmp.py','w') as f:
+	with open('./tmp.py','w') as f:
 		for s in new_lines:
 			f.write(str(s))
 		f.write('        return out')
-        f.close()
+		f.close()
 	with open('./debug/' + file_name.split('/')[2],'w') as f:
 		for s in new_lines:
 			f.write(str(s))
 		f.write('        return out')
-        f.close()
+		f.close()
 	#from tmp import *
 	import tmp
 	reload(tmp)
@@ -306,12 +312,14 @@ def mutation(file_name,deletion_prob=0.5):
 def no_mutation(file_name):
 	with open(file_name, 'r') as f:
 		new_lines = f.readlines()
+	new_lines = dim_check(new_lines)
+	new_lines = x_out_check(new_lines)
 	device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 	if os.path.exists('./mutation/tmp.py'):
 		os.remove('./mutation/tmp.py')
 	if os.path.exists('./mutation/tmp.pyc'):
 		os.remove('./mutation/tmp.pyc')
-	with open('./mutation/tmp.py','w') as f:
+	with open('./tmp.py','w') as f:
 		for s in new_lines:
 			f.write(str(s))
 		f.write('        return out')
@@ -320,7 +328,7 @@ def no_mutation(file_name):
 		for s in new_lines:
 			f.write(str(s))
 		f.write('        return out')
-        f.close()
+		f.close()
 	import tmp
 	reload(tmp)
 	model = tmp.Net().to(device)
