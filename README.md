@@ -1,5 +1,6 @@
 # evolving-NN-code
 Evolving neural network code based on existing human code. 
+![img](img/results.png)
 
 ## Dependencies
 Our implementation requires the following. 
